@@ -127,28 +127,11 @@
 
       function registerOfflineCache() {
         if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
-        var swCode = [
-          "var CACHE = 'cvg-proto-v1';",
-          "self.addEventListener('install', function(e) {",
-          "  e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(['./']); }));",
-          "  self.skipWaiting();",
-          "});",
-          "self.addEventListener('fetch', function(e) {",
-          "  if (e.request.method !== 'GET') return;",
-          "  e.respondWith(",
-          "    caches.match(e.request).then(function(cached) {",
-          "      return cached || fetch(e.request).then(function(res) {",
-          "        var copy = res.clone();",
-          "        caches.open(CACHE).then(function(c) { c.put(e.request, copy); });",
-          "        return res;",
-          "      }).catch(function() { return cached; });",
-          "    })",
-          "  );",
-          "});"
-        ].join("\n");
-        var blob = new Blob([swCode], { type: "application/javascript" });
-        var url = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(url).catch(function () {});
+        navigator.serviceWorker
+          .register("./sw.js", { scope: "./" })
+          .catch(function (err) {
+            console.error("SW registration failed:", err);
+          });
       }
 
       var TXT = {
