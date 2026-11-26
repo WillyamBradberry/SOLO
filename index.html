@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#071d17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CVG" />
+  <title>CVG</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: #0d1826;
+      color: #f7f3eb;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Helvetica, Arial, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .screen { padding: 16px 16px 104px 16px; }
+    .row-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+    .brand-box { display: flex; align-items: center; gap: 10px; }
+    .logo-shield {
+      width: 38px; height: 38px; border-radius: 10px;
+      background-color: #09261e; border: 1.5px solid #d8b25e; color: #f8c489;
+      font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 12px; letter-spacing: 1px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-shield.lg { width: 64px; height: 64px; border-radius: 16px; font-size: 18px; margin: 0 auto 8px auto; }
+    .brand-name { font-size: 16px; font-weight: 700; }
+    .brand-sub { font-size: 11px; color: #a8bac9; }
+    .controls { display: flex; align-items: center; gap: 6px; }
+    .lang-wrap { display: flex; background-color: #0a2132; border: 1px solid rgba(248, 196, 137, 0.25); border-radius: 9px; padding: 2px; }
+    .lang-btn { border: none; background: transparent; color: #a8bac9; font-size: 11px; font-weight: 700; padding: 5px 8px; border-radius: 7px; }
+    .lang-btn.active { background-color: #f8c489; color: #0d1826; }
+    .btn-mini { background-color: #0a2132; color: #f8c489; border: 1px solid rgba(248, 196, 137, 0.3); border-radius: 9px; padding: 6px 10px; font-size: 11px; font-weight: 600; }
+    .card { background-color: #0a2132; border: 1px solid rgba(248, 196, 137, 0.18); border-radius: 16px; padding: 15px; margin-bottom: 14px; }
+    .card-hi { background-color: #112c40; border: 1px solid rgba(248, 196, 137, 0.38); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+    .bal-head { display: flex; justify-content: space-between; font-size: 12px; color: #a8bac9; margin-bottom: 6px; }
+    .bal-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .bal-num { font-size: 32px; font-weight: 700; color: #f7f3eb; }
+    .eye-btn { width: 52px; height: 38px; border-radius: 10px; background-color: #112c40; border: 1px solid rgba(248, 196, 137, 0.35); color: #f8c489; font-size: 11px; font-weight: 700; }
+    .sec-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .carousel { display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 14px; padding-bottom: 4px; }
+    .p-card { flex: 0 0 250px; background-color: #0a2132; border: 1px solid rgba(248, 196, 137, 0.35); border-radius: 16px; padding: 14px; color: #f7f3eb; text-align: left; }
+    .p-card.active { border-color: #f8c489; }
+    .p-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #a8bac9; margin-bottom: 12px; }
+    .badge { background-color: rgba(248, 196, 137, 0.16); border: 1px solid rgba(248, 196, 137, 0.35); color: #f8c489; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+    .p-pan { font-size: 14px; font-weight: 600; letter-spacing: 1px; margin-bottom: 12px; }
+    .p-bal { font-size: 16px; font-weight: 700; color: #f8c489; }
+    .p-acc { font-size: 11px; color: #6f8598; margin-bottom: 2px; }
+    .qa-grid { display: flex; gap: 8px; margin-bottom: 14px; }
+    .qa-btn { flex: 1; background-color: #0a2132; border: 1px solid rgba(248, 196, 137, 0.18); border-radius: 12px; padding: 10px 4px; color: #f7f3eb; font-size: 11px; font-weight: 600; text-align: center; }
+    .qa-ico { color: #f8c489; font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .tx-item { background-color: #0a2132; border: 1px solid rgba(248, 196, 137, 0.16); border-radius: 12px; padding: 11px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .tx-name { font-size: 13px; font-weight: 600; }
+    .tx-date { font-size: 11px; color: #6f8598; margin-top: 2px; }
+    .tx-val { font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .tx-pos { color: #38b27c; }
+    .tx-neg { color: #f7f3eb; }
+    .btn-gold { width: 100%; background-color: #f8c489; color: #0d1826; border: none; border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .btn-dark { width: 100%; background-color: #112c40; color: #f8c489; border: 1px solid rgba(248, 196, 137, 0.35); border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .inp { width: 100%; background-color: #0d1826; border: 1px solid rgba(248, 196, 137, 0.38); border-radius: 12px; padding: 12px 14px; color: #f7f3eb; font-size: 16px; margin-bottom: 10px; }
+    .secrets { background-color: #0d1826; border: 1px dashed rgba(248, 196, 137, 0.35); border-radius: 12px; padding: 12px; margin: 10px 0; font-size: 12px; }
+    .sec-grid { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .link { background: none; border: none; color: #f8c489; font-size: 12px; font-weight: 600; padding: 0; }
+    .nav { position: fixed; left: 0; right: 0; bottom: 0; background-color: #0a2132; border-top: 1px solid rgba(248, 196, 137, 0.2); display: flex; justify-content: space-around; align-items: center; padding: 8px 6px 14px 6px; }
+    .nav-b { background: none; border: none; color: #6f8598; font-size: 10px; font-weight: 600; text-align: center; padding: 2px 4px; }
+    .nav-b.active { color: #f8c489; }
+    .nav-plus { width: 40px; height: 40px; border-radius: 12px; background-color: #f8c489; color: #0d1826; font-size: 20px; font-weight: 800; line-height: 40px; margin: 0 auto; }
+    .ok-msg { background-color: #112c40; border: 1px solid #38b27c; color: #38b27c; border-radius: 12px; padding: 10px 12px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <div id="app" class="screen"></div>
+  <div id="nav"></div>
+
+  <script>
+    (function () {
+      function applyPngAppleIcon() {
+        try {
+          var cvs = document.createElement("canvas");
+          cvs.width = 180;
+          cvs.height = 180;
+          var ctx = cvs.getContext("2d");
+          if (!ctx) return;
+
+          ctx.fillStyle = "#071d17";
+          ctx.fillRect(0, 0, 180, 180);
+
+          ctx.fillStyle = "#0c2b22";
+          ctx.strokeStyle = "#d8b25e";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(90, 22);
+          ctx.lineTo(142, 42);
+          ctx.lineTo(142, 92);
+          ctx.quadraticCurveTo(142, 132, 90, 158);
+          ctx.quadraticCurveTo(38, 132, 38, 92);
+          ctx.lineTo(38, 42);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.strokeStyle = "rgba(248, 196, 137, 0.35)";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(20, 20, 140, 140);
+
+          ctx.fillStyle = "#f8c489";
+          ctx.font = "bold 40px Georgia, 'Times New Roman', serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("CVG", 90, 92);
+
+          var pngUrl = cvs.toDataURL("image/png");
+          var link = document.querySelector("link[rel='apple-touch-icon']");
+          if (!link) {
+            link = document.createElement("link");
+            link.rel = "apple-touch-icon";
+            document.head.appendChild(link);
+          }
+          link.href = pngUrl;
+        } catch (e) {}
+      }
+
+    function registerOfflineCache() {
+        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+          navigator.serviceWorker.register('./sw.js').catch(function () {});
+        }
+      }
+
+      var TXT = {
+        en: {
+          sub: "Private & Everyday Banking", authTitle: "Sign in to CVG",
+          authDesc: "Enter passcode to unlock (any 4+ characters or 1234).",
+          passPh: "Enter passcode", unlock: "Unlock", demo: "Fill Demo (1234)",
+          err4: "Enter at least 4 characters.", total: "Total available funds",
+          cards3: "Accounts & Cards (3)", tapCard: "Tap card for details",
+          qa: "Quick Actions", qTr: "Transfer", qPay: "Pay", qOwn: "To Account", qCrd: "Cards",
+          lastTx: "Last transactions", seeAll: "See all", cust: "Customize dashboard",
+          back: "Back to Home", linked: "Linked Card", hiddenNote: "Card details are hidden by default",
+          showDet: "Show card details", hideDet: "Hide card details",
+          exp: "Expiry", cvv: "CVV", status: "Status", active: "Active",
+          accTx: "Account transactions", space: "My Space", accCards: "Accounts and Cards",
+          loy: "Loyalty", solo: "SOLO Premium", soloSub: "Next membership review: Dec 15, 2026",
+          rec: "Recommended for you", addProd: "+ Add product", txPage: "Transactions",
+          searchPh: "Search transaction...", tpl: "Templates", offers: "Offers",
+          offersFor: "Offers for you", actBtn: "Activate", actDone: "Activated",
+          hub: "Hub", fx: "Exchange rates", fm: "Financial manager",
+          trTitle: "Quick Transfer ($)", amtLbl: "Amount (USD)", send: "Send Transfer",
+          doneTr: "Transfer completed", lock: "Lock",
+          nHome: "Home", nSpace: "My Space", nTr: "Transfer", nOff: "Offer", nHub: "Hub"
+        },
+        zh: {
+          sub: "私人与日常银行服务", authTitle: "登录 CVG",
+          authDesc: "输入访问密码解锁（任意 4 位以上或 1234）。",
+          passPh: "输入密码", unlock: "解锁进入", demo: "填入演示密码 (1234)",
+          err4: "请至少输入 4 个字符。", total: "可用总余额",
+          cards3: "账户与卡片 (3)", tapCard: "点击卡片查看详情",
+          qa: "快捷操作", qTr: "转账", qPay: "缴费", qOwn: "自有账户", qCrd: "卡片管理",
+          lastTx: "最近交易", seeAll: "查看全部", cust: "自定义首页组件",
+          back: "返回首页", linked: "关联银行卡", hiddenNote: "卡片详情默认隐藏",
+          showDet: "显示卡片详情", hideDet: "隐藏卡片详情",
+          exp: "有效期", cvv: "安全码", status: "状态", active: "正常有效",
+          accTx: "本账户交易记录", space: "我的空间", accCards: "账户与银行卡",
+          loy: "积分礼遇", solo: "SOLO 尊享权益", soloSub: "下次评估：2026年12月15日",
+          rec: "为您推荐", addProd: "+ 添加产品", txPage: "交易明细",
+          searchPh: "搜索交易...", tpl: "常用模板", offers: "专属优惠",
+          offersFor: "精选礼遇", actBtn: "立即启用", actDone: "已启用",
+          hub: "服务大厅", fx: "实时汇率", fm: "财务管家",
+          trTitle: "快速转账 ($)", amtLbl: "金额 (美元)", send: "确认转账",
+          doneTr: "转账已完成", lock: "锁定",
+          nHome: "首页", nSpace: "我的", nTr: "转账", nOff: "优惠", nHub: "大厅"
+        }
+      };
+
+      var CARDS = [
+        { id: "v1", net: "VISA", en: "Universal · VISA 1", zh: "综合账户 · VISA 1", acc: "CVG-8841-01", mask: "•••• •••• •••• 4821", pan: "4532 8910 3304 4821", exp: "09/29", cvv: "842", bal: 18420.50 },
+        { id: "v2", net: "VISA", en: "SOLO Travel · VISA 2", zh: "SOLO 差旅 · VISA 2", acc: "CVG-8841-02", mask: "•••• •••• •••• 7190", pan: "4916 1120 8841 7190", exp: "04/28", cvv: "519", bal: 9640.00 },
+        { id: "m1", net: "MASTERCARD", en: "Reserve Vault · MC", zh: "储备金库 · MC", acc: "CVG-8841-03", mask: "•••• •••• •••• 3056", pan: "5412 7500 2198 3056", exp: "11/28", cvv: "276", bal: 14590.25 }
+      ];
+
+      var TXS = [
+        { id: "1", cid: "v1", en: "Whole Foods Market", zh: "全食超市", dt: "Today, 14:20", amt: -128.40 },
+        { id: "2", cid: "v1", en: "Consulting Retainer", zh: "顾问服务入账", dt: "Yesterday", amt: 2450.00 },
+        { id: "3", cid: "v2", en: "Delta Air Lines", zh: "达美航空", dt: "Nov 22", amt: -612.00 },
+        { id: "4", cid: "m1", en: "Treasury Yield Credit", zh: "国债收益结算", dt: "Nov 20", amt: 318.75 },
+        { id: "5", cid: "v1", en: "City Bistro", zh: "城市小馆", dt: "Nov 18", amt: -64.80 }
+      ];
+
+      var OFFERS = [
+        { id: "o1", tag: "SOLO", en: "5% Cashback on Dining & Hotels", zh: "餐饮与酒店 5% 返现", subEn: "Up to $150/month", subZh: "每月最高 $150" },
+        { id: "o2", tag: "Travel", en: "Airport Lounge Priority Pass", zh: "机场贵宾厅尊享礼遇", subEn: "Complimentary SOLO access", subZh: "SOLO 专属礼遇" },
+        { id: "o3", tag: "Shopping", en: "Zero Fee FX up to $5,000", zh: "高达 $5,000 免汇费", subEn: "Valid until Dec 31, 2026", subZh: "有效期至 2026-12-31" }
+      ];
+
+      var S = {
+        authed: false, pass: "", err: "", lang: "en", tab: "home",
+        detail: false, trOpen: false, trAmt: "250.00", notice: "",
+        cid: "v1", hideBal: false, showSec: false, q: "", widget: true, act: {}
+      };
+
+      function tr(k) { return TXT[S.lang][k] || k; }
+      function usd(n) {
+        if (S.hideBal) return "••••••••";
+        var sign = n < 0 ? "-" : "";
+        var parts = Math.abs(n).toFixed(2).split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return sign + "$" + parts.join(".");
+      }
+      function sumBal() {
+        var total = 0;
+        for (var i = 0; i < CARDS.length; i++) total += CARDS[i].bal;
+        return total;
+      }
+      function getCard() {
+        for (var i = 0; i < CARDS.length; i++) if (CARDS[i].id === S.cid) return CARDS[i];
+        return CARDS[0];
+      }
+      function el(tag, cls, text) {
+        var node = document.createElement(tag);
+        if (cls) node.className = cls;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+      }
+      function makeLangBar() {
+        var wrap = el("div", "lang-wrap");
+        ["en", "zh"].forEach(function (code) {
+          var b = el("button", "lang-btn" + (S.lang === code ? " active" : ""), code.toUpperCase());
+          b.type = "button";
+          b.addEventListener("click", function () { S.lang = code; render(); });
+          wrap.appendChild(b);
+        });
+        return wrap;
+      }
+      function makeTopBar(sub) {
+        var top = el("div", "row-top");
+        var box = el("div", "brand-box");
+        box.appendChild(el("div", "logo-shield", "CVG"));
+        var titles = el("div");
+        titles.appendChild(el("div", "brand-name", "CVG"));
+        titles.appendChild(el("div", "brand-sub", sub));
+        box.appendChild(titles);
+        top.appendChild(box);
+
+        var ctrls = el("div", "controls");
+        ctrls.appendChild(makeLangBar());
+        var lockB = el("button", "btn-mini", tr("lock"));
+        lockB.type = "button";
+        lockB.addEventListener("click", function () {
+          S.authed = false; S.pass = ""; S.detail = false; S.trOpen = false; render();
+        });
+        ctrls.appendChild(lockB);
+        top.appendChild(ctrls);
+        return top;
+      }
+
+      function renderAuth(app) {
+        var top = el("div", "row-top");
+        var box = el("div", "brand-box");
+        box.appendChild(el("div", "logo-shield", "CVG"));
+        var titles = el("div");
+        titles.appendChild(el("div", "brand-name", "CVG"));
+        titles.appendChild(el("div", "brand-sub", tr("sub")));
+        box.appendChild(titles);
+        top.appendChild(box);
+        top.appendChild(makeLangBar());
+        app.appendChild(top);
+
+        var c = el("div", "card-hi");
+        c.style.marginTop = "20px";
+        c.style.textAlign = "center";
+        c.appendChild(el("div", "logo-shield lg", "CVG"));
+        var h1 = el("div", null, tr("authTitle"));
+        h1.style.fontSize = "20px"; h1.style.fontWeight = "700"; h1.style.marginBottom = "6px";
+        c.appendChild(h1);
+        var desc = el("div", null, tr("authDesc"));
+        desc.style.fontSize = "12px"; desc.style.color = "#a8bac9"; desc.style.marginBottom = "14px";
+        c.appendChild(desc);
+
+        var inp = el("input", "inp");
+        inp.type = "password";
+        inp.value = S.pass;
+        inp.placeholder = tr("passPh");
+        inp.addEventListener("input", function () { S.pass = inp.value; S.err = ""; });
+        c.appendChild(inp);
+
+        if (S.err) {
+          var er = el("div", null, S.err);
+          er.style.color = "#e06358"; er.style.fontSize = "12px"; er.style.marginBottom = "10px";
+          c.appendChild(er);
+        }
+
+        var go = el("button", "btn-gold", tr("unlock"));
+        go.type = "button";
+        go.addEventListener("click", function () {
+          if ((S.pass || "").replace(/\s+/g, "").length < 4) { S.err = tr("err4"); render(); return; }
+          S.authed = true; S.err = ""; S.tab = "home"; S.detail = false; render();
+        });
+        c.appendChild(go);
+
+        var demo = el("button", "btn-dark", tr("demo"));
+        demo.type = "button";
+        demo.addEventListener("click", function () { S.pass = "1234"; S.err = ""; render(); });
+        c.appendChild(demo);
+        app.appendChild(c);
+      }
+
+      function renderHome(app) {
+        app.appendChild(makeTopBar(tr("sub")));
+        if (S.notice) {
+          var ok = el("div", "ok-msg");
+          ok.appendChild(el("span", null, S.notice));
+          var okBtn = el("button", "btn-mini", "OK");
+          okBtn.type = "button";
+          okBtn.addEventListener("click", function () { S.notice = ""; render(); });
+          ok.appendChild(okBtn);
+          app.appendChild(ok);
+        }
+
+        var balCard = el("div", "card");
+        var bHead = el("div", "bal-head");
+        bHead.appendChild(el("span", null, tr("total")));
+        bHead.appendChild(el("span", null, "USD ($)"));
+        balCard.appendChild(bHead);
+
+        var bLine = el("div", "bal-line");
+        bLine.appendChild(el("div", "bal-num", usd(sumBal())));
+        var eye = el("button", "eye-btn", S.hideBal ? "SHOW" : "HIDE");
+        eye.type = "button";
+        eye.addEventListener("click", function () { S.hideBal = !S.hideBal; render(); });
+        bLine.appendChild(eye);
+        balCard.appendChild(bLine);
+        app.appendChild(balCard);
+
+        var secCards = el("div", "sec-title");
+        secCards.appendChild(el("span", null, tr("cards3")));
+        var hint = el("span", null, tr("tapCard"));
+        hint.style.fontSize = "11px"; hint.style.color = "#6f8598";
+        secCards.appendChild(hint);
+        app.appendChild(secCards);
+
+        var car = el("div", "carousel");
+        CARDS.forEach(function (item) {
+          var btn = el("button", "p-card" + (item.id === S.cid ? " active" : ""));
+          btn.type = "button";
+          var top = el("div", "p-top");
+          top.appendChild(el("span", null, S.lang === "zh" ? item.zh : item.en));
+          top.appendChild(el("span", "badge", item.net));
+          btn.appendChild(top);
+          btn.appendChild(el("div", "p-pan", item.mask));
+          btn.appendChild(el("div", "p-acc", item.acc));
+          btn.appendChild(el("div", "p-bal", usd(item.bal)));
+          btn.addEventListener("click", function () { S.cid = item.id; S.showSec = false; S.detail = true; render(); });
+          car.appendChild(btn);
+        });
+        app.appendChild(car);
+
+        app.appendChild(el("div", "sec-title", tr("qa")));
+        var qa = el("div", "qa-grid");
+        [
+          { ico: "⇄", lbl: tr("qTr"), fn: function () { S.trOpen = true; render(); } },
+          { ico: "$", lbl: tr("qPay"), fn: function () { S.tab = "tx"; S.detail = false; render(); } },
+          { ico: "↗", lbl: tr("qOwn"), fn: function () { S.trOpen = true; render(); } },
+          { ico: "▣", lbl: tr("qCrd"), fn: function () { S.showSec = false; S.detail = true; render(); } }
+        ].forEach(function (qItem) {
+          var b = el("button", "qa-btn");
+          b.type = "button";
+          b.appendChild(el("div", "qa-ico", qItem.ico));
+          b.appendChild(document.createTextNode(qItem.lbl));
+          b.addEventListener("click", qItem.fn);
+          qa.appendChild(b);
+        });
+        app.appendChild(qa);
+
+        var txHead = el("div", "sec-title");
+        txHead.appendChild(el("span", null, tr("lastTx")));
+        var seeAll = el("button", "link", tr("seeAll"));
+        seeAll.type = "button";
+        seeAll.addEventListener("click", function () { S.tab = "tx"; S.detail = false; render(); });
+        txHead.appendChild(seeAll);
+        app.appendChild(txHead);
+
+        for (var i = 0; i < Math.min(4, TXS.length); i++) {
+          var tItem = TXS[i];
+          var pos = tItem.amt >= 0;
+          var row = el("div", "tx-item");
+          var left = el("div");
+          left.appendChild(el("div", "tx-name", S.lang === "zh" ? tItem.zh : tItem.en));
+          left.appendChild(el("div", "tx-date", tItem.dt));
+          row.appendChild(left);
+          row.appendChild(el("div", "tx-val " + (pos ? "tx-pos" : "tx-neg"), (pos ? "+" : "") + usd(tItem.amt)));
+          app.appendChild(row);
+        }
+
+        if (S.widget) {
+          var w = el("div", "card");
+          w.style.display = "flex"; w.style.justifyContent = "space-between"; w.style.alignItems = "center"; w.style.gap = "8px";
+          var wL = el("div");
+          var wT = el("div", null, "SOLO Travel & Protection");
+          wT.style.fontSize = "13px"; wT.style.fontWeight = "700"; wT.style.color = "#f8c489";
+          wL.appendChild(wT);
+          var wS = el("div", null, "USD ($)");
+          wS.style.fontSize = "11px"; wS.style.color = "#a8bac9";
+          wL.appendChild(wS);
+          w.appendChild(wL);
+          var actB = el("button", "btn-mini", tr("actBtn"));
+          actB.type = "button";
+          actB.addEventListener("click", function () { S.tab = "offer"; render(); });
+          w.appendChild(actB);
+          app.appendChild(w);
+        }
+
+        var custB = el("button", "btn-dark", tr("cust"));
+        custB.type = "button";
+        custB.addEventListener("click", function () { S.widget = !S.widget; render(); });
+        app.appendChild(custB);
+      }
+
+      function renderDetail(app) {
+        var c = getCard();
+        var top = el("div", "row-top");
+        var back = el("button", "link", "← " + tr("back"));
+        back.type = "button";
+        back.addEventListener("click", function () { S.detail = false; render(); });
+        top.appendChild(back);
+        top.appendChild(makeLangBar());
+        app.appendChild(top);
+
+        var card = el("div", "card-hi");
+        var pTop = el("div", "p-top");
+        var pTitle = el("span", null, S.lang === "zh" ? c.zh : c.en);
+        pTitle.style.fontSize = "15px"; pTitle.style.fontWeight = "700"; pTitle.style.color = "#f7f3eb";
+        pTop.appendChild(pTitle);
+        pTop.appendChild(el("span", "badge", c.net));
+        card.appendChild(pTop);
+
+        var b = el("div", null, usd(c.bal));
+        b.style.fontSize = "26px"; b.style.fontWeight = "700"; b.style.color = "#f8c489"; b.style.marginBottom = "8px";
+        card.appendChild(b);
+
+        var lk = el("div", null, tr("linked") + ": " + (S.showSec ? c.pan : c.mask));
+        lk.style.fontSize = "12px"; lk.style.color = "#a8bac9";
+        card.appendChild(lk);
+
+        var sec = el("div", "secrets");
+        var g1 = el("div", "sec-grid");
+        g1.appendChild(el("span", null, tr("exp") + ": " + (S.showSec ? c.exp : "••/••")));
+        g1.appendChild(el("span", null, tr("cvv") + ": " + (S.showSec ? c.cvv : "•••")));
+        sec.appendChild(g1);
+        var g2 = el("div", "sec-grid");
+        g2.appendChild(el("span", null, tr("status") + ": " + tr("active")));
+        g2.appendChild(el("span", null, c.acc));
+        sec.appendChild(g2);
+        card.appendChild(sec);
+
+        var note = el("div", null, tr("hiddenNote"));
+        note.style.fontSize = "11px"; note.style.color = "#6f8598"; note.style.marginBottom = "10px";
+        card.appendChild(note);
+
+        var tog = el("button", "btn-gold", S.showSec ? tr("hideDet") : tr("showDet"));
+        tog.type = "button";
+        tog.addEventListener("click", function () { S.showSec = !S.showSec; render(); });
+        card.appendChild(tog);
+        app.appendChild(card);
+
+        app.appendChild(el("div", "sec-title", tr("accTx")));
+        TXS.forEach(function (tItem) {
+          if (tItem.cid === c.id) {
+            var pos = tItem.amt >= 0;
+            var row = el("div", "tx-item");
+            var left = el("div");
+            left.appendChild(el("div", "tx-name", S.lang === "zh" ? tItem.zh : tItem.en));
+            left.appendChild(el("div", "tx-date", tItem.dt));
+            row.appendChild(left);
+            row.appendChild(el("div", "tx-val " + (pos ? "tx-pos" : "tx-neg"), (pos ? "+" : "") + usd(tItem.amt)));
+            app.appendChild(row);
+          }
+        });
+      }
+
+      function renderSpace(app) {
+        app.appendChild(makeTopBar(tr("space")));
+        var c1 = el("div", "card");
+        c1.appendChild(el("div", "tx-name", tr("accCards")));
+        var v1 = el("div", "p-bal", usd(sumBal()));
+        v1.style.marginTop = "4px";
+        c1.appendChild(v1);
+        c1.addEventListener("click", function () { S.tab = "home"; render(); });
+        app.appendChild(c1);
+
+        var c2 = el("div", "card");
+        c2.appendChild(el("div", "tx-name", tr("loy")));
+        var v2 = el("div", "p-bal", "2,840 pts");
+        v2.style.marginTop = "4px";
+        c2.appendChild(v2);
+        app.appendChild(c2);
+
+        var c3 = el("div", "card-hi");
+        var st = el("div", "tx-name", tr("solo"));
+        st.style.color = "#f8c489";
+        c3.appendChild(st);
+        c3.appendChild(el("div", "tx-date", tr("soloSub")));
+        app.appendChild(c3);
+
+        var add = el("button", "btn-gold", tr("addProd"));
+        add.type = "button";
+        add.addEventListener("click", function () { S.tab = "hub"; render(); });
+        app.appendChild(add);
+      }
+
+      function renderTx(app) {
+        app.appendChild(makeTopBar(tr("txPage")));
+        var inp = el("input", "inp");
+        inp.value = S.q;
+        inp.placeholder = tr("searchPh");
+        inp.addEventListener("input", function () { S.q = inp.value; render(); });
+        app.appendChild(inp);
+
+        var q = S.q.toLowerCase();
+        TXS.forEach(function (tItem) {
+          var lbl = (S.lang === "zh" ? tItem.zh : tItem.en).toLowerCase();
+          if (!q || lbl.indexOf(q) !== -1) {
+            var pos = tItem.amt >= 0;
+            var row = el("div", "tx-item");
+            var left = el("div");
+            left.appendChild(el("div", "tx-name", S.lang === "zh" ? tItem.zh : tItem.en));
+            left.appendChild(el("div", "tx-date", tItem.dt));
+            row.appendChild(left);
+            row.appendChild(el("div", "tx-val " + (pos ? "tx-pos" : "tx-neg"), (pos ? "+" : "") + usd(tItem.amt)));
+            app.appendChild(row);
+          }
+        });
+      }
+
+      function renderOffers(app) {
+        app.appendChild(makeTopBar(tr("offers")));
+        OFFERS.forEach(function (o) {
+          var card = el("div", "card");
+          var top = el("div", "p-top");
+          top.appendChild(el("span", "badge", o.tag));
+          var b = el("button", "btn-mini", S.act[o.id] ? tr("actDone") : tr("actBtn"));
+          b.type = "button";
+          b.addEventListener("click", function () { S.act[o.id] = true; render(); });
+          top.appendChild(b);
+          card.appendChild(top);
+          card.appendChild(el("div", "tx-name", S.lang === "zh" ? o.zh : o.en));
+          card.appendChild(el("div", "tx-date", S.lang === "zh" ? o.subZh : o.subEn));
+          app.appendChild(card);
+        });
+      }
+
+      function renderHub(app) {
+        app.appendChild(makeTopBar(tr("hub")));
+        ["Loans & BNPL", "Deposits & Savings", "Cards", "Other"].forEach(function (g) {
+          var c = el("div", "card");
+          c.appendChild(el("div", "tx-name", g));
+          app.appendChild(c);
+        });
+      }
+
+      function renderTransfer(app) {
+        var top = el("div", "row-top");
+        var back = el("button", "link", "← " + tr("back"));
+        back.type = "button";
+        back.addEventListener("click", function () { S.trOpen = false; render(); });
+        top.appendChild(back);
+        top.appendChild(makeLangBar());
+        app.appendChild(top);
+
+        var c = el("div", "card-hi");
+        var t = el("div", null, tr("trTitle"));
+        t.style.fontSize = "17px"; t.style.fontWeight = "700"; t.style.marginBottom = "8px";
+        c.appendChild(t);
+
+        var inp = el("input", "inp");
+        inp.type = "number"; inp.step = "0.01"; inp.value = S.trAmt;
+        inp.addEventListener("input", function () { S.trAmt = inp.value; });
+        c.appendChild(inp);
+
+        var send = el("button", "btn-gold", tr("send"));
+        send.type = "button";
+        send.addEventListener("click", function () {
+          var v = parseFloat(S.trAmt);
+          if (!isNaN(v) && v > 0) {
+            var card = getCard();
+            card.bal = Math.max(0, +(card.bal - v).toFixed(2));
+            TXS.unshift({ id: String(Date.now()), cid: card.id, en: "Instant Transfer", zh: "即时转账", dt: "Just now", amt: -v });
+            S.notice = tr("doneTr") + ": -$" + v.toFixed(2);
+          }
+          S.trOpen = false; S.detail = false; S.tab = "home"; render();
+        });
+        c.appendChild(send);
+        app.appendChild(c);
+      }
+
+      function renderNav() {
+        var navEl = document.getElementById("nav");
+        navEl.innerHTML = "";
+        if (!S.authed || S.detail || S.trOpen) return;
+
+        var bar = el("div", "nav");
+        [
+          { id: "home", ico: "⌂", lbl: tr("nHome") },
+          { id: "space", ico: "❖", lbl: tr("nSpace") },
+          { id: "tr", ico: "+", lbl: tr("nTr"), center: true },
+          { id: "offer", ico: "✦", lbl: tr("nOff") },
+          { id: "hub", ico: "⊞", lbl: tr("nHub") }
+        ].forEach(function (it) {
+          var b = el("button", "nav-b" + (S.tab === it.id ? " active" : ""));
+          b.type = "button";
+          if (it.center) {
+            b.appendChild(el("div", "nav-plus", "+"));
+            b.addEventListener("click", function () { S.trOpen = true; render(); });
+          } else {
+            b.appendChild(el("div", null, it.ico));
+            b.appendChild(document.createTextNode(it.lbl));
+            b.addEventListener("click", function () { S.tab = it.id; S.detail = false; render(); });
+          }
+          bar.appendChild(b);
+        });
+        navEl.appendChild(bar);
+      }
+
+      function render() {
+        var app = document.getElementById("app");
+        app.innerHTML = "";
+        if (!S.authed) renderAuth(app);
+        else if (S.trOpen) renderTransfer(app);
+        else if (S.detail) renderDetail(app);
+        else if (S.tab === "home") renderHome(app);
+        else if (S.tab === "space") renderSpace(app);
+        else if (S.tab === "tx") renderTx(app);
+        else if (S.tab === "offer") renderOffers(app);
+        else if (S.tab === "hub") renderHub(app);
+        renderNav();
+      }
+
+      function init() {
+        applyPngAppleIcon();
+        registerOfflineCache();
+        render();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
