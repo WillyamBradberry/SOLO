@@ -1,26 +1,35 @@
-const CACHE_NAME = 'cvg-offline-v2';
-const ASSETS = ['./', './index.html', './sw.js'];
+var CACHE = "cvg-proto-v1";
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+self.addEventListener("install", function (e) {
+  e.waitUntil(
+    caches.open(CACHE).then(function (c) {
+      return c.addAll(["./", "./index.html"]);
+    })
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+self.addEventListener("activate", function (e) {
+  e.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cached) => {
-      return cached || fetch(event.request).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        return res;
-      });
+self.addEventListener("fetch", function (e) {
+  if (e.request.method !== "GET") return;
+  e.respondWith(
+    caches.match(e.request).then(function (cached) {
+      if (cached) return cached;
+      return fetch(e.request)
+        .then(function (res) {
+          if (!res || res.status !== 200 || res.type === "opaque") return res;
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) {
+            c.put(e.request, copy);
+          });
+          return res;
+        })
+        .catch(function () {
+          return cached || caches.match("./index.html");
+        });
     })
   );
 });
