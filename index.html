@@ -125,10 +125,30 @@
         } catch (e) {}
       }
 
-    function registerOfflineCache() {
-        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-          navigator.serviceWorker.register('./sw.js').catch(function () {});
-        }
+      function registerOfflineCache() {
+        if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+        var swCode = [
+          "var CACHE = 'cvg-proto-v1';",
+          "self.addEventListener('install', function(e) {",
+          "  e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(['./']); }));",
+          "  self.skipWaiting();",
+          "});",
+          "self.addEventListener('fetch', function(e) {",
+          "  if (e.request.method !== 'GET') return;",
+          "  e.respondWith(",
+          "    caches.match(e.request).then(function(cached) {",
+          "      return cached || fetch(e.request).then(function(res) {",
+          "        var copy = res.clone();",
+          "        caches.open(CACHE).then(function(c) { c.put(e.request, copy); });",
+          "        return res;",
+          "      }).catch(function() { return cached; });",
+          "    })",
+          "  );",
+          "});"
+        ].join("\n");
+        var blob = new Blob([swCode], { type: "application/javascript" });
+        var url = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(url).catch(function () {});
       }
 
       var TXT = {
@@ -156,7 +176,7 @@
         zh: {
           sub: "私人与日常银行服务", authTitle: "登录 CVG",
           authDesc: "输入访问密码解锁（任意 4 位以上或 1234）。",
-          passPh: "输入密码", unlock: "解锁进入", demo: "填入演示密码 (1234)",
+          passPh: "输入密码", unlock: "解锁进入", demo: "填入",
           err4: "请至少输入 4 个字符。", total: "可用总余额",
           cards3: "账户与卡片 (3)", tapCard: "点击卡片查看详情",
           qa: "快捷操作", qTr: "转账", qPay: "缴费", qOwn: "自有账户", qCrd: "卡片管理",
